@@ -1,0 +1,35 @@
+<svg width="420" height="140" viewBox="0 0 420 140" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ringLg" x1="0" y1="0" x2="140" y2="140">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+    <radialGradient id="bgLg" cx="50%" cy="35%" r="75%">
+      <stop offset="0" stop-color="#151C33"/>
+      <stop offset="1" stop-color="#05070D"/>
+    </radialGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="420" height="140" fill="none"/>
+
+  <g transform="translate(10,10)">
+    <circle cx="60" cy="60" r="56" fill="url(#bgLg)"/>
+    <circle cx="60" cy="60" r="56" fill="rgba(255,255,255,0.03)"/>
+    <circle cx="60" cy="60" r="50" stroke="url(#ringLg)" stroke-width="1.8" opacity="0.55" fill="none"/>
+    <circle cx="60" cy="60" r="56" stroke="rgba(255,255,255,0.14)" stroke-width="1" fill="none"/>
+    <g filter="url(#softGlow)">
+      <path d="M60 26 L60 94 M26 60 L94 60" stroke="#FF3B5C" stroke-width="8" stroke-linecap="round"/>
+    </g>
+    <path d="M16 70 L34 70 L40 50 L52 88 L64 38 L74 70 L104 70" stroke="#22D3EE" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  </g>
+
+  <text x="150" y="68" font-family="'Space Grotesk', sans-serif" font-size="34" font-weight="600" fill="#EDF1FB">RESQ<tspan fill="#FF3B5C">FLOW</tspan></text>
+  <text x="150" y="94" font-family="'Inter', sans-serif" font-size="13" fill="#AAB4D1">AI-Powered Emergency Response &amp; Dynamic Routing</text>
+</svg>

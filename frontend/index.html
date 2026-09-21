@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESQFLOW — Every Second Matters</title>
+<meta name="description" content="AI-powered emergency response and dynamic routing platform connecting ambulances, traffic networks, and hospitals in real time.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+</head>
+<body>
+
+<!-- BACKGROUND FIELD -->
+<div class="bg-field" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow--red"></div>
+  <div class="bg-glow bg-glow--cyan"></div>
+</div>
+
+<!-- NAVIGATION -->
+<header class="nav">
+  <div class="nav__inner glass">
+    <a class="nav__brand" href="#landing" data-nav="landing">
+      <svg class="brand-mark" width="34" height="34" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="url(#gradRing)" stroke-width="1.4" opacity="0.6"/>
+        <path d="M20 8 L20 32 M8 20 L32 20" stroke="#FF3B5C" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M4 24 L11 24 L14 17 L18 30 L22 12 L25 24 L36 24" stroke="#22D3EE" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+        <defs>
+          <linearGradient id="gradRing" x1="0" y1="0" x2="40" y2="40">
+            <stop offset="0" stop-color="#22D3EE"/>
+            <stop offset="1" stop-color="#34D399"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-word">RESQ<em>FLOW</em></span>
+    </a>
+
+    <nav class="nav__links" id="navLinks">
+      <a href="#landing" data-nav="landing">Home</a>
+      <a href="#control" data-nav="control">Emergency</a>
+      <a href="#map" data-nav="map">Live Map</a>
+      <a href="#ambulances" data-nav="ambulances">Ambulances</a>
+      <a href="#hospitals" data-nav="hospitals">Hospitals</a>
+      <a href="#corridor" data-nav="corridor">Green Corridor</a>
+      <a href="#responder" data-nav="responder">Responder Desk</a>
+      <a href="#operations" data-nav="operations">Operations Flow</a>
+      <a href="#analytics" data-nav="analytics">Analytics</a>
+      <a href="#about" data-nav="about">About</a>
+    </nav>
+
+    <div class="nav__actions">
+      <span class="status-pill">
+        <span class="status-dot"></span>System Operational
+      </span>
+      <a href="#control" data-nav="control" class="btn btn--primary btn--sm">Control Center</a>
+      <button class="nav__burger" id="navBurger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ============ LANDING ============ -->
+  <section class="view" id="view-landing" data-view="landing">
+    <section class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow-free">AI-powered emergency coordination</p>
+        <h1 class="hero__title">Every second<br>matters.</h1>
+        <p class="hero__sub">RESQFLOW connects ambulances, traffic networks and hospitals in one real-time routing layer — so the nearest help takes the fastest possible path.</p>
+        <div class="hero__cta">
+          <a href="#control" data-nav="control" class="btn btn--primary btn--lg">Launch Emergency Control Center</a>
+          <a href="#how" class="btn btn--ghost btn--lg" data-scroll="how">Explore How It Works</a>
+        </div>
+        <div class="hero__proof">
+          <div><strong>31%</strong><span>faster response, simulated</span></div>
+          <div><strong>96%</strong><span>routes optimized</span></div>
+          <div><strong>4</strong><span>green corridors live</span></div>
+        </div>
+      </div>
+
+      <div class="hero__map glass" id="heroMap">
+        <div class="hero-map__header">
+          <span class="dot dot--red pulse"></span> Live Emergency — Sector 4
+        </div>
+        <svg viewBox="0 0 520 380" class="city-svg" id="heroCitySvg"></svg>
+        <div class="hero-floaters" id="heroFloaters">
+          <div class="floater glass" style="--delay:0s">
+            <span class="floater__label">ETA</span>
+            <span class="floater__value" id="floatEta">08 min 42 sec</span>
+          </div>
+          <div class="floater glass" style="--delay:.4s">
+            <span class="floater__label">Traffic</span>
+            <span class="floater__value floater__value--amber">Moderate</span>
+          </div>
+          <div class="floater glass" style="--delay:.8s">
+            <span class="floater__label">Route Efficiency</span>
+            <span class="floater__value floater__value--green">94%</span>
+          </div>
+          <div class="floater glass" style="--delay:1.2s">
+            <span class="floater__label">Hospital</span>
+            <span class="floater__value">City Care Hospital</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEFORE / AFTER -->
+    <section class="section">
+      <div class="section__head">
+        <h2>Traditional dispatch vs. RESQFLOW</h2>
+        <p>The same emergency, coordinated two very different ways.</p>
+      </div>
+      <div class="compare">
+        <div class="compare__col glass compare__col--old">
+          <h3>Traditional System</h3>
+          <ul>
+            <li>Manual emergency coordination</li>
+            <li>Longer response time</li>
+            <li>Static, fixed routes</li>
+            <li>No hospital availability awareness</li>
+            <li>Manual traffic coordination</li>
+            <li>No predictive ETA</li>
+          </ul>
+        </div>
+        <div class="compare__mid">
+          <div class="compare__badge">
+            <span>31%</span>
+            <small>potential response-time reduction</small>
+          </div>
+        </div>
+        <div class="compare__col glass compare__col--new">
+          <h3>RESQFLOW</h3>
+          <ul>
+            <li>AI-assisted ambulance &amp; hospital matching</li>
+            <li>Dynamic rerouting around blockages</li>
+            <li>Traffic-aware navigation</li>
+            <li>Real-time hospital capacity matching</li>
+            <li>Simulated green corridor coordination</li>
+            <li>Predictive ETA with confidence score</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="how">
+      <div class="section__head">
+        <h2>How it works</h2>
+        <p>Traffic data → AI ETA prediction → route optimization → dynamic rerouting</p>
+      </div>
+      <div class="flow">
+        <div class="flow__step glass"><span>1</span>Emergency reported</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>2</span>Ambulance selected</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>3</span>Traffic &amp; road data pulled</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>4</span>AI ETA prediction</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>5</span>Route optimized</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>6</span>Green corridor</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>7</span>Hospital matched</div>
+        <div class="flow__arrow">→</div>
+        <div class="flow__step glass"><span>8</span>Live tracking &amp; analytics</div>
+      </div>
+
+      <div class="tech-grid">
+        <div class="tech-card glass"><h4>Frontend</h4><p>Vanilla JS modules, Chart.js, SVG live map</p></div>
+        <div class="tech-card glass"><h4>Backend</h4><p>Node.js / Express + Socket.IO</p></div>
+        <div class="tech-card glass"><h4>Routing</h4><p>Time-dependent A* / Dijkstra simulation</p></div>
+        <div class="tech-card glass"><h4>Maps</h4><p>Google Maps JS API (simulated fallback)</p></div>
+        <div class="tech-card glass"><h4>AI / ML</h4><p>Heuristic ETA engine, ML-ready interface</p></div>
+        <div class="tech-card glass"><h4>Data</h4><p>In-memory store / MongoDB-ready schema</p></div>
+      </div>
+    </section>
+
+    <!-- IMPACT -->
+    <section class="section impact">
+      <div class="section__head">
+        <h2>Saving minutes. Saving lives.</h2>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-card glass">
+          <span class="impact-num" data-count="31" data-suffix="%">0%</span>
+          <span class="impact-label">Potential response-time improvement</span>
+        </div>
+        <div class="impact-card glass">
+          <span class="impact-num" data-count-time="278">0:00</span>
+          <span class="impact-label">Average time saved per run</span>
+        </div>
+        <div class="impact-card glass">
+          <span class="impact-num" data-count="94" data-suffix="%">0%</span>
+          <span class="impact-label">Route optimization score</span>
+        </div>
+        <div class="impact-card glass">
+          <span class="impact-num" data-count="91" data-suffix="%">0%</span>
+          <span class="impact-label">ETA prediction confidence</span>
+        </div>
+      </div>
+      <p class="disclaimer">Metrics shown in this prototype are simulated demonstration values and should not be interpreted as clinical or operational claims.</p>
+    </section>
+  </section>
+
+  <!-- ============ EMERGENCY CONTROL CENTER ============ -->
+  <section class="view" id="view-control" data-view="control">
+    <div class="view-head">
+      <div>
+        <h1>Emergency Control Center</h1>
+        <p>Live overview of every active case, ambulance and corridor.</p>
+      </div>
+      <button class="btn btn--danger btn--lg" id="btnRunDemo">🚨 Run Emergency Simulation</button>
+    </div>
+
+    <div class="metric-grid" id="metricGrid">
+      <div class="metric glass"><span class="metric__value" id="mActive">12</span><span class="metric__label">Active Emergencies</span></div>
+      <div class="metric glass"><span class="metric__value" id="mAmb">28</span><span class="metric__label">Ambulances Available</span></div>
+      <div class="metric glass"><span class="metric__value" id="mResp">08:42</span><span class="metric__label">Avg. Response Time</span></div>
+      <div class="metric glass"><span class="metric__value" id="mHosp">14</span><span class="metric__label">Hospitals Available</span></div>
+      <div class="metric glass"><span class="metric__value" id="mCorr">4</span><span class="metric__label">Green Corridors Active</span></div>
+      <div class="metric glass"><span class="metric__value" id="mOpt">96%</span><span class="metric__label">Routes Optimized</span></div>
+    </div>
+
+    <div class="control-grid">
+      <!-- Emergency request form -->
+      <div class="panel glass panel--form">
+        <h2>New Emergency Request</h2>
+        <form id="emergencyForm">
+          <label class="field">
+            <span>Emergency Type</span>
+            <select name="type" id="fType">
+              <option>Accident</option>
+              <option>Cardiac Emergency</option>
+              <option>Trauma</option>
+              <option>Fire</option>
+              <option>Medical Emergency</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Location</span>
+            <div class="seg" id="locSeg">
+              <button type="button" class="seg__opt is-active" data-loc="current">Current location</button>
+              <button type="button" class="seg__opt" data-loc="manual">Manual entry</button>
+              <button type="button" class="seg__opt" data-loc="map">Map selection</button>
+            </div>
+            <input type="text" name="location" id="fLocation" placeholder="Sector 4, MG Road Junction" value="Sector 4, MG Road Junction">
+          </label>
+
+          <label class="field">
+            <span>Severity</span>
+            <div class="seg seg--severity" id="sevSeg">
+              <button type="button" class="seg__opt sev-critical is-active" data-sev="Critical">Critical</button>
+              <button type="button" class="seg__opt sev-high" data-sev="High">High</button>
+              <button type="button" class="seg__opt sev-medium" data-sev="Medium">Medium</button>
+              <button type="button" class="seg__opt sev-low" data-sev="Low">Low</button>
+            </div>
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span>Patients</span>
+              <input type="number" name="patients" id="fPatients" min="1" value="1">
+            </label>
+            <label class="field">
+              <span>Age</span>
+              <input type="number" name="age" id="fAge" min="0" value="45">
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Special requirement</span>
+            <input type="text" name="special" id="fSpecial" placeholder="e.g. Cardiac unit required">
+          </label>
+
+          <button type="submit" class="btn btn--danger btn--lg btn--block">🚨 INITIATE EMERGENCY RESPONSE</button>
+        </form>
+      </div>
+
+      <!-- Result / priority queue -->
+      <div class="panel glass panel--result" id="resultPanel">
+        <h2>Priority Queue</h2>
+        <div class="queue" id="priorityQueue"></div>
+      </div>
+    </div>
+
+    <!-- Case detail (appears after request) -->
+    <div class="panel glass panel--case" id="caseDetail" hidden>
+      <div class="case-head">
+        <div>
+          <span class="tag" id="caseId">EMG-0000</span>
+          <h2 id="caseTitle">Emergency dispatched</h2>
+        </div>
+        <span class="badge badge--live">LIVE</span>
+      </div>
+      <div class="case-grid">
+        <div><span>Ambulance</span><strong id="caseAmb">—</strong></div>
+        <div><span>Hospital</span><strong id="caseHosp">—</strong></div>
+        <div><span>Route</span><strong id="caseRoute">—</strong></div>
+        <div><span>ETA</span><strong id="caseEta">—</strong></div>
+        <div><span>Traffic</span><strong id="caseTraffic">—</strong></div>
+        <div><span>Green Corridor</span><strong id="caseCorridor">—</strong></div>
+      </div>
+      <div class="timeline" id="caseTimeline"></div>
+    </div>
+
+    <!-- AI Routing Engine -->
+    <div class="panel glass">
+      <h2>AI Dynamic Routing Engine</h2>
+      <p class="muted">The system evaluates distance, live traffic density, road capacity, roadblocks, time of day and emergency severity — not just the shortest path.</p>
+      <div class="routes-grid" id="routesGrid"></div>
+      <div class="ai-pick glass" id="aiPick"></div>
+    </div>
+
+    <!-- Dynamic rerouting -->
+    <div class="panel glass">
+      <div class="panel__row">
+        <h2>Dynamic Rerouting</h2>
+        <button class="btn btn--ghost btn--sm" id="btnBlock">🚧 Simulate Road Blockage</button>
+      </div>
+      <div id="rerouteBox" class="reroute-box">Trigger a blockage to see the AI recalculate the route in real time.</div>
+    </div>
+
+    <div class="panel glass notification-panel">
+      <div class="panel__row">
+        <div><h2>Live Notification Center</h2><p class="muted small">Coordination events from the current response.</p></div>
+        <span class="badge badge--live" id="notificationCount">0 LIVE</span>
+      </div>
+      <div class="notification-list" id="notificationList"></div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE MAP ============ -->
+  <section class="view" id="view-map" data-view="map">
+    <div class="view-head">
+      <div><h1>Live Map</h1><p>Real-time positions of ambulances, hospitals and traffic signals.</p></div>
+    </div>
+    <div class="map-layout">
+      <div class="panel glass map-panel">
+        <div class="real-map" id="liveMap" aria-label="Interactive emergency response map">
+          <svg viewBox="0 0 900 540" class="city-svg city-svg--full" id="liveCitySvg" aria-label="Simulated city map fallback"></svg>
+        </div>
+        <div class="map-legend glass">
+          <span><i class="dot dot--red"></i>Ambulance</span>
+          <span><i class="dot dot--cyan"></i>Hospital</span>
+          <span><i class="dot dot--amber"></i>Signal</span>
+          <span><i class="dot dot--green"></i>Green corridor</span>
+        </div>
+      </div>
+      <aside class="panel glass map-side">
+        <h3>Selected Ambulance</h3>
+        <div class="amb-detail" id="ambDetail">
+          <div><span>Ambulance</span><strong>AMB-204</strong></div>
+          <div><span>Status</span><strong class="pill pill--live">EN ROUTE</strong></div>
+          <div><span>Speed</span><strong id="ambSpeed">62 km/h</strong></div>
+          <div><span>ETA</span><strong id="ambEta">06:42</strong></div>
+          <div><span>Patient</span><strong>Critical</strong></div>
+          <div><span>Destination</span><strong>Apollo Emergency Center</strong></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ AMBULANCES ============ -->
+  <section class="view" id="view-ambulances" data-view="ambulances">
+    <div class="view-head">
+      <div><h1>Ambulance Management</h1><p>Fleet status across the city.</p></div>
+    </div>
+    <div class="filter-bar" id="ambFilters">
+      <button class="chip is-active" data-filter="All">All</button>
+      <button class="chip" data-filter="Available">Available</button>
+      <button class="chip" data-filter="Active">Active</button>
+      <button class="chip" data-filter="Hospital">Hospital</button>
+      <button class="chip" data-filter="Maintenance">Maintenance</button>
+    </div>
+    <div class="card-grid" id="ambGrid"></div>
+  </section>
+
+  <!-- ============ HOSPITALS ============ -->
+  <section class="view" id="view-hospitals" data-view="hospitals">
+    <div class="view-head">
+      <div><h1>Hospital Matching</h1><p>Hospitals are scored on capacity and readiness, not distance alone.</p></div>
+    </div>
+    <div class="card-grid card-grid--hosp" id="hospGrid"></div>
+  </section>
+
+  <!-- ============ GREEN CORRIDOR ============ -->
+  <section class="view" id="view-corridor" data-view="corridor">
+    <div class="view-head">
+      <div><h1>Green Corridor</h1><p>Clear the path before the ambulance arrives.</p></div>
+    </div>
+    <div class="corridor-stats">
+      <div class="metric glass"><span class="metric__value" id="corrDist">4.8 km</span><span class="metric__label">Corridor Distance</span></div>
+      <div class="metric glass"><span class="metric__value" id="corrSignals">12</span><span class="metric__label">Signals Coordinated</span></div>
+      <div class="metric glass"><span class="metric__value" id="corrSaved">06:24</span><span class="metric__label">Estimated Time Saved</span></div>
+    </div>
+    <div class="panel glass">
+      <div class="signal-row" id="signalRow"></div>
+    </div>
+    <p class="muted small">Signal states are simulated for demonstration — no live traffic-control system is connected.</p>
+  </section>
+
+  <!-- ============ RESPONDER DESK ============ -->
+  <section class="view" id="view-responder" data-view="responder">
+    <div class="view-head">
+      <div><h1>Responder Desk</h1><p>Coordinate priority response, traffic signals, and field teams from one operational view.</p></div>
+      <button class="btn btn--danger btn--lg" id="btnResponderDemo">🚨 Run Emergency Simulation</button>
+    </div>
+    <div class="responder-grid">
+      <div class="panel glass responder-priority">
+        <div class="panel__row"><h2>Priority Queue</h2><span class="pill pill--live">LIVE</span></div>
+        <div id="responderQueue" class="queue"></div>
+      </div>
+      <div class="panel glass responder-alert">
+        <div class="panel__row"><h2>Field Alert</h2><span class="sev-badge sev-badge--Critical">CRITICAL</span></div>
+        <div class="alert-callout"><strong>AMB-204 approaching Signal 08.</strong><span>Patient condition: critical · ETA 06:42</span></div>
+        <button class="btn btn--primary btn--block" id="btnPriorityGreen">🟢 Activate Priority Green</button>
+        <div class="coordination-list">
+          <div><span>Police coordination</span><strong class="text-green">Confirmed</strong></div>
+          <div><span>Traffic control</span><strong class="text-green">12 signals linked</strong></div>
+          <div><span>Hospital readiness</span><strong class="text-cyan">City Care ready</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="responder-grid responder-grid--lower">
+      <div class="panel glass">
+        <div class="panel__row"><h2>Signal Coordination</h2><span class="muted small">Simulated control</span></div>
+        <div class="signal-row signal-row--compact" id="responderSignals"></div>
+      </div>
+      <div class="panel glass">
+        <div class="panel__row"><h2>Road &amp; Traffic Watch</h2><span class="dot dot--amber pulse"></span></div>
+        <div class="traffic-watch">
+          <div class="traffic-watch__item"><span>Current</span><strong class="text-amber">Moderate</strong><small>45% density</small></div>
+          <div class="traffic-watch__item"><span>+5 min</span><strong class="text-red">Heavy</strong><small>62% density</small></div>
+          <div class="traffic-watch__item"><span>Roadblock</span><strong class="text-red">1 active</strong><small>MG Road · 1.2 km</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel glass notification-panel">
+      <div class="panel__row"><div><h2>Responder Activity</h2><p class="muted small">Recent dispatch, corridor, and hospital events.</p></div><span class="badge badge--live">LIVE FEED</span></div>
+      <div class="notification-list" id="responderNotifications"></div>
+    </div>
+  </section>
+
+  <!-- ============ ANALYTICS ============ -->
+  <!-- ============ OPERATIONS FLOW ============ -->
+  <section class="view" id="view-operations" data-view="operations">
+    <div class="view-head">
+      <div><h1>Live Operations Flow</h1><p>Watch every background process as a nearby emergency moves through the response network.</p></div>
+      <button class="btn btn--danger btn--lg" id="btnAccidentNow">🚨 Simulate Nearby Accident</button>
+    </div>
+    <div class="incident-monitor glass">
+      <div class="incident-monitor__status"><span class="status-dot"></span><strong>Nearby incident monitor active</strong><span class="muted">New accident scans every 60 seconds</span></div>
+      <div class="incident-monitor__timer"><span>Next automatic scan</span><strong id="accidentCountdown">60s</strong></div>
+    </div>
+    <div class="flowchart" id="operationsFlow" aria-label="Emergency response process flowchart">
+      <div class="flow-node is-active" data-flow-step="alert"><span class="flow-node__index">01</span><span class="flow-node__icon">🚨</span><strong>Emergency notification</strong><small>Nearby accident detected</small></div>
+      <div class="flow-connector"><span></span></div>
+      <div class="flow-node" data-flow-step="ambulance"><span class="flow-node__index">02</span><span class="flow-node__icon">🚑</span><strong>Nearby ambulance</strong><small>Nearest available unit assigned</small></div>
+      <div class="flow-connector"><span></span></div>
+      <div class="flow-node" data-flow-step="routes"><span class="flow-node__index">03</span><span class="flow-node__icon">🧠</span><strong>Traffic routes</strong><small>AI compares live route options</small></div>
+      <div class="flow-connector"><span></span></div>
+      <div class="flow-node" data-flow-step="moving"><span class="flow-node__index">04</span><span class="flow-node__icon">🗺️</span><strong>Ambulance moving</strong><small>Green corridor and ETA active</small></div>
+      <div class="flow-connector"><span></span></div>
+      <div class="flow-node" data-flow-step="hospital"><span class="flow-node__index">05</span><span class="flow-node__icon">🏥</span><strong>Hospital reached</strong><small>Capacity confirmed and handoff complete</small></div>
+      <div class="flow-loop"><span>↻</span> Network continues monitoring for the next emergency</div>
+    </div>
+    <div class="operations-grid">
+      <div class="panel glass">
+        <div class="panel__row"><div><h2>Incident Stream</h2><p class="muted small">Simulated nearby accident alerts.</p></div><span class="badge badge--live" id="incidentCount">0 ALERTS</span></div>
+        <div class="incident-list" id="incidentList"><div class="empty-state">Waiting for the next nearby incident scan.</div></div>
+      </div>
+      <div class="panel glass">
+        <div class="panel__row"><h2>Current Response</h2><span class="pill pill--available" id="flowResponseStatus">MONITORING</span></div>
+        <div class="response-summary" id="flowResponseSummary"><strong>No active incident</strong><span>The response pipeline is standing by.</span></div>
+        <div class="mini-metrics"><div><span>Ambulance</span><strong id="flowAmbulance">—</strong></div><div><span>Route</span><strong id="flowRoute">—</strong></div><div><span>ETA</span><strong id="flowEta">—</strong></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ANALYTICS ============ -->
+  <section class="view" id="view-analytics" data-view="analytics">
+    <div class="view-head">
+      <div><h1>Analytics</h1><p>Performance since RESQFLOW activation.</p></div>
+    </div>
+    <div class="metric-grid">
+      <div class="metric glass"><span class="metric__value">04:38</span><span class="metric__label">Average Time Saved</span></div>
+      <div class="metric glass"><span class="metric__value">31%</span><span class="metric__label">Response Improvement</span></div>
+      <div class="metric glass"><span class="metric__value">91%</span><span class="metric__label">ETA Confidence</span></div>
+      <div class="metric glass"><span class="metric__value">12</span><span class="metric__label">Signals Coordinated</span></div>
+    </div>
+    <div class="forecast-grid">
+      <div class="panel glass eta-panel"><div class="panel__row"><h2>AI ETA Prediction</h2><span class="pill pill--available">91% confidence</span></div><div class="eta-readout"><strong>07:18</strong><span>predicted arrival</span></div><div class="eta-factors"><span>Traffic density <b>45%</b></span><span>Current speed <b>62 km/h</b></span><span>Road condition <b>Clear</b></span></div></div>
+      <div class="panel glass"><div class="panel__row"><h2>Traffic Forecast</h2><span class="muted small">Next 60 minutes</span></div><div class="forecast-bars"><div style="--bar:45%"><span>Now</span><b>Moderate</b></div><div style="--bar:62%"><span>+5m</span><b>Heavy</b></div><div style="--bar:78%"><span>+15m</span><b>Very heavy</b></div><div style="--bar:55%"><span>+30m</span><b>Moderate</b></div></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="panel glass"><h3>Response Time Trend</h3><canvas id="chartResponse"></canvas></div>
+      <div class="panel glass"><h3>Traffic Forecast</h3><canvas id="chartTraffic"></canvas></div>
+      <div class="panel glass"><h3>Emergencies by Type</h3><canvas id="chartType"></canvas></div>
+      <div class="panel glass"><h3>Hospital Load</h3><canvas id="chartHosp"></canvas></div>
+    </div>
+
+    <div class="panel glass">
+      <div class="panel__row">
+        <h2>Emergency History</h2>
+        <input type="text" id="historySearch" placeholder="Search by ID, type, or hospital…">
+      </div>
+      <div class="table-wrap">
+        <table class="hist-table" id="historyTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Date</th><th>Type</th><th>Severity</th><th>Ambulance</th><th>Hospital</th><th>Initial ETA</th><th>Final ETA</th><th>Time Saved</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="view" id="view-about" data-view="about">
+    <div class="view-head"><div><h1>About RESQFLOW</h1><p>Built for Hackathon 2026.</p></div></div>
+    <div class="panel glass about-panel">
+      <p>RESQFLOW is a prototype emergency-response ecosystem. It simulates how AI-assisted routing, traffic coordination and hospital matching could reduce the time between an emergency call and definitive care.</p>
+      <div class="arch">
+        <div class="arch__row">Emergency User</div>
+        <div class="arch__arrow">↓</div>
+        <div class="arch__row">Emergency API</div>
+        <div class="arch__arrow">↓</div>
+        <div class="arch__row">Backend Server (Node / Express / Socket.IO)</div>
+        <div class="arch__arrow">↓</div>
+        <div class="arch__box">
+          Emergency Management · Ambulance Management · Routing Engine<br>
+          AI Prediction Engine · Hospital Matching · Green Corridor Engine
+        </div>
+        <div class="arch__arrow">↓</div>
+        <div class="arch__row">Database + Maps + Traffic Data</div>
+        <div class="arch__arrow">↓</div>
+        <div class="arch__row">Dashboards</div>
+      </div>
+      <div class="roles">
+        <span class="chip chip--static">Admin</span>
+        <span class="chip chip--static">Emergency Operator</span>
+        <span class="chip chip--static">Ambulance Driver</span>
+        <span class="chip chip--static">Hospital Staff</span>
+        <span class="chip chip--static">Traffic Coordinator</span>
+      </div>
+      <p class="muted small">No real patient data is used anywhere in this prototype. All emergencies, locations and metrics are simulated for demonstration purposes only.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- DEMO OVERLAY -->
+<div class="demo-overlay" id="demoOverlay" hidden>
+  <div class="demo-box glass">
+    <div class="demo-box__head">
+      <span>RESQFLOW SIMULATION</span>
+      <button id="demoClose" aria-label="Close">✕</button>
+    </div>
+    <ol class="demo-steps" id="demoSteps"></ol>
+    <div class="demo-result" id="demoResult" hidden>
+      <h2>RESPONSE COMPLETE</h2>
+      <p>Time Saved: <strong id="demoTimeSaved">04:38</strong></p>
+      <button class="btn btn--primary" id="demoDone">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION CENTER -->
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<!-- AI ASSISTANT -->
+<button class="assistant-launcher" id="assistantLauncher" aria-label="Open RESQFLOW AI assistant" aria-expanded="false">
+  <span class="assistant-launcher__pulse"></span>
+  <span class="assistant-launcher__icon">✦</span>
+  <span class="assistant-launcher__label">RESQ AI</span>
+</button>
+<aside class="assistant-panel glass" id="assistantPanel" aria-label="RESQFLOW AI assistant" hidden>
+  <div class="assistant-head">
+    <div>
+      <span class="assistant-eyebrow">RESQFLOW INTELLIGENCE</span>
+      <h2>Response Assistant</h2>
+    </div>
+    <button class="assistant-close" id="assistantClose" aria-label="Close assistant">×</button>
+  </div>
+  <div class="assistant-status"><span class="status-dot"></span> Simulation copilot online</div>
+  <div class="assistant-messages" id="assistantMessages" aria-live="polite">
+    <div class="assistant-message assistant-message--bot">I can explain routes, hospital matching, green corridors, or help launch a simulated response.</div>
+  </div>
+  <div class="assistant-prompts" id="assistantPrompts">
+    <button type="button" data-prompt="What is the fastest route?">Fastest route</button>
+    <button type="button" data-prompt="Which hospital is recommended?">Hospital match</button>
+    <button type="button" data-prompt="How does green corridor work?">Green corridor</button>
+  </div>
+  <form class="assistant-form" id="assistantForm">
+    <input id="assistantInput" type="text" placeholder="Ask about this response..." autocomplete="off">
+    <button class="btn btn--primary" type="submit" aria-label="Send message">↑</button>
+  </form>
+</aside>
+
+<footer class="footer">
+  <div class="footer__inner glass">
+    <div>
+      <span class="brand-word brand-word--sm">RESQ<em>FLOW</em></span>
+      <p>Intelligent emergency response for smarter cities.</p>
+    </div>
+    <div class="footer__links">
+      <a href="#how">Technology</a>
+      <a href="#how">How It Works</a>
+      <a href="#control" data-nav="control">Demo</a>
+      <a href="#about">Privacy</a>
+      <a href="#about">Contact</a>
+    </div>
+    <span class="footer__tag">Built for Hackathon 2026</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/map.js?v=4"></script>
+<script src="js/charts.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
