@@ -1,5 +1,11 @@
 # RESQFLOW — AI-Powered Emergency Response & Dynamic Routing
 
+RESQFLOW is a smart emergency response dashboard designed to improve ambulance dispatch, emergency prioritization, route optimization, hospital matching, and live operational visibility. It brings together real-time emergency coordination, simulated traffic intelligence, and hospital capacity awareness into a single command-center experience.
+
+The platform helps reduce response time by recommending the best available ambulance, predicting ETA, re-routing around blockages, and matching patients to the most suitable hospital based on capacity and readiness. The UI is built as a modern dark-mode control center with live metrics, map views, analytics, and simulated response workflows.
+
+This project is ideal for hackathon demos, emergency management prototypes, and concept validation for AI-assisted disaster response systems.
+
 **Every Second Matters.**
 
 A hackathon prototype of an emergency-response command platform: ambulance
@@ -104,3 +110,5 @@ map with zero setup. To use real Google Maps:
   swapping in a real API or trained model without touching UI code.
 
 Built for Hackathon 2026.
+
+This page is live at: https://mahesh88971.github.io/RESQFLOW/
